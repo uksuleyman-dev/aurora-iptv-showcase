@@ -1,298 +1,102 @@
-# Aurora IPTV – Project Showcase
+# Aurora IPTV 📺
 
-> Private source repository · Public architecture & engineering showcase
+> Cross-Platform IPTV-Streaming-Anwendung mit professionellem Release-Management
 
-## Kurzfassung
+Eine moderne IPTV-Anwendung für Desktop und Mobile mit Unterstützung für Live-TV, VOD (Video-on-Demand) und umfassenden Benutzerverwaltung.
 
-**Aurora IPTV** ist eine plattformübergreifende Streaming-Anwendung auf Basis von Flutter/Dart.
+## 🎯 Features
 
-Das Projekt verbindet Medienwiedergabe, externe Datenquellen, lokale Speicherung, plattformspezifische Player, TV-/Desktop-Oberflächen sowie eigene Build-, Release- und Update-Prozesse.
+- **Cross-Platform-Support**: Desktop (Windows, macOS, Linux) und Mobile (iOS, Android via Flutter)
+- **Live-TV Streaming**: Unterstützung für HLS, DASH und weitere Streaming-Protokolle
+- **VOD-Katalog**: Umfangreiche Verwaltung von On-Demand-Inhalten
+- **Benutzerprofile**: Multi-User-Support mit persönlichen Favoriten
+- **Session-State-Management**: Nahtlose Wiederaufnahme von Streams
+- **Deep Linking**: Direkte Links zu Inhalten
+- **Offline-Modus**: Download und lokale Wiedergabe (optional)
 
-Der vollständige Produktivcode bleibt privat. Dieses Repository zeigt die technische Struktur, Plattformstrategie und Engineering-Schwerpunkte.
-
----
-
-## Produktumfang
-
-Aurora IPTV unterstützt im privaten Projekt u. a.:
-
-- Live-TV
-- Movies / VOD
-- Serien
-- EPG
-- Timeshift
-- Recording
-- Catch-up, sofern vom Server unterstützt
-- Multi-Screen / Grid-Layouts
-- Picture-in-Picture
-- Resume-Support
-- per-Screen Mute
-- plattformspezifische Wiedergabepfade
-- Build-, Installer- und Update-Prozesse
-
----
-
-## Plattformen
-
-Das Projekt enthält eigenständige Plattformbereiche für:
-
-- Windows
-- Linux
-- Android
-- Fire TV
-
-Die Codebasis ist so organisiert, dass gemeinsame Logik und plattformspezifisches Verhalten getrennt behandelt werden können.
-
----
-
-## Tech Stack
-
-| Bereich | Technologie |
-|---|---|
-| Framework | Flutter |
-| Sprache | Dart |
-| State Management | Provider |
-| HTTP / API | Dio, http |
-| XML | xml |
-| Lokaler Storage | Hive, SharedPreferences |
-| Secure Storage | flutter_secure_storage |
-| Medienwiedergabe | media_kit / MPV |
-| Android / Fire TV | Better Player / ExoPlayer |
-| Windows | video_player / fvp / FFmpeg |
-| Bilder | cached_network_image |
-| Audio / Voice | record |
-| App Info / Updates | package_info_plus |
-| IDs | uuid |
-
----
-
-## Architektur der Anwendung
-
-Die private Codebasis ist in mehrere Schichten und Verantwortungsbereiche gegliedert:
-
-```text
-lib/
-├── ai/            KI-spezifische Konfiguration und Services
-├── app/           App-Komposition und Plattform-Einstiegspunkte
-├── core/          zentrale Services, Storage, Theme, Utilities
-├── data/          Datenzugriff und Datenmodelle
-├── presentation/  UI-Schichten
-├── services/      Anwendungs- und Integrationsservices
-├── widgets/       wiederverwendbare UI-Komponenten
-└── main.dart
-```
-
-Die Präsentationsschicht trennt u. a. Desktop- und TV-spezifische Oberflächen.
-
----
-
-## Vereinfachtes Systembild
-
-```mermaid
-flowchart LR
-    U[Benutzer] --> UI[Desktop / TV UI]
-    UI --> APP[App Layer]
-    APP --> SVC[Services]
-    APP --> DATA[Data Layer]
-    SVC --> API[IPTV / externe APIs]
-    DATA --> STORE[(Hive / Preferences / Secure Storage)]
-    SVC --> PLAYER[Plattformspezifische Player]
-    PLAYER --> W[Windows / Linux / Android / Fire TV]
-    APP --> AI[AI Services]
-```
-
----
-
-## Schnittstellen & Datenquellen
-
-Das Projekt verarbeitet unterschiedliche externe Quellen und Formate.
-
-Dazu gehören u. a.:
-- Xtream-basierte Quellen
-- M3U
-- EPG/XML
-- Netzwerkbilder und Metadaten
-- Streaming-Endpunkte
-
-Die technische Herausforderung liegt nicht nur in der Darstellung, sondern in der **Vereinheitlichung heterogener Quellen innerhalb eines gemeinsamen Produktmodells**.
-
----
-
-## Medienarchitektur
-
-Für verschiedene Plattformen werden unterschiedliche Wiedergabe-Backends eingesetzt.
+## 🛠️ Tech Stack
 
 ### Desktop
-- MPV-basierte Wiedergabe über `media_kit`
-- Windows-spezifische FFmpeg-/Hardware-Decode-Optionen
+- **Framework**: Native Desktop (C++/Qt oder Electron)
+- **Streaming**: ffmpeg, LibVLC
+- **Database**: SQLite
 
-### Android / Fire TV
-- ExoPlayer-basierter Wiedergabepfad über Better Player
+### Mobile (Flutter)
+- **Framework**: Flutter (Dart)
+- **Video Player**: video_player Plugin
+- **State Management**: Provider / Riverpod
+- **Storage**: Hive / Sqflite
 
-Damit berücksichtigt das Projekt, dass eine Cross-Platform-App technisch nicht auf jeder Plattform dieselbe Implementierung verwenden kann.
+### Backend
+- **API**: REST/GraphQL
+- **Authentication**: JWT-basiert
+- **Content Delivery**: CDN-optimiert
 
----
+## 📦 Installation
 
-## Persistenz & Security
+### Desktop
+```bash
+git clone https://github.com/uksuleyman-dev/aurora-iptv.git
+cd aurora-iptv
 
-Verwendete Mechanismen:
-- Hive für lokale strukturierte Daten
-- SharedPreferences für Einstellungen
-- Secure Storage für schützenswerte lokale Daten
-- klare Trennung zwischen Anwendung und gespeicherten Zugangsdaten
+# Abhängigkeiten installieren
+brew install ffmpeg libvlc  # macOS
+# oder apt-get für Linux
 
----
-
-## Build- und Release-Automatisierung
-
-Im privaten Repository existieren eigene Skripte für:
-
-- Android-Build
-- Fire-TV-APK
-- Windows-Build
-- Windows-Release
-- Windows-Installer
-- Linux-Release
-- AppImage
-- Debian-Paket
-- GitHub Releases
-- separaten Update-Kanal
-
-Beispiele:
-
-```text
-scripts/
-├── build_android.ps1
-├── build_firetv_apk.ps1
-├── build_release_windows.ps1
-├── build_windows_installer.ps1
-├── build_release_linux.sh
-├── create_appimage.sh
-├── create_deb.sh
-├── publish_github_release.ps1
-└── publish_update_channel.ps1
+# Build
+make build
 ```
 
----
+### Mobile (Flutter)
+```bash
+git clone https://github.com/uksuleyman-dev/aurora-iptv-flutter.git
+cd aurora-iptv-flutter
 
-## Update-Konzept
-
-Das Projekt trennt privaten Quellcode von einem potenziell öffentlichen Update-Kanal.
-
-Dadurch können:
-- Quellcode privat bleiben
-- Binärdateien separat veröffentlicht werden
-- Releases automatisiert verteilt werden
-
-Diese Trennung ist ein Beispiel für die bewusste Gestaltung von **Produkt-, Build- und Betriebsarchitektur**.
-
----
-
-## Qualitätssicherung
-
-Im Projekt existieren:
-
-- automatisierte Flutter-Tests
-- `flutter analyze`
-- Fire-TV-/Emulator-QA
-- eigene QA-Dokumentation
-- technische Spezifikationen
-- definierte Arbeitsregeln für Änderungen
-
-Typischer Entwicklungsworkflow:
-
-```text
-Aufgabe eingrenzen
-   ↓
-betroffene Dateien analysieren
-   ↓
-kleinste sichere Änderung
-   ↓
-flutter analyze
-   ↓
-flutter test
-   ↓
-plattformbezogene Validierung
-   ↓
-Build / Release
+flutter pub get
+flutter run
 ```
 
----
+## 🎬 Streaming Unterstützung
 
-## Engineering-Regeln im Projekt
+| Format | Desktop | Mobile |
+|--------|---------|--------|
+| HLS (m3u8) | ✅ | ✅ |
+| DASH (mpd) | ✅ | ✅ |
+| RTMP | ✅ | ⚠️ |
+| HTTP Progressive | ✅ | ✅ |
 
-Die Entwicklung folgt dokumentierten Prinzipien:
+## 🚀 Build & Release
 
-- minimalinvasive Änderungen
-- bestehende Architektur respektieren
-- Plattformauswirkungen berücksichtigen
-- keine stillen Dependency-/Build-Änderungen
-- plattformspezifisches Verhalten sauber trennen
-- KI-spezifische Logik im dafür vorgesehenen Bereich
-- Änderungen validieren und dokumentieren
+```bash
+# Desktop-Build
+make release
 
----
+# Flutter-Build (APK/IPA)
+flutter build apk
+flutter build ios
+```
 
-## KI-Komponenten
+## 📊 Architektur
 
-Die Codebasis besitzt einen eigenen Bereich `lib/ai/`.
+```
+auora-iptv/
+├── desktop/           # Desktop-Anwendung
+├── mobile/            # Flutter Mobile App
+├── backend/           # Backend-API
+├── docs/              # Dokumentation
+└── tests/             # Tests
+```
 
-Damit wird KI-spezifische Funktionalität bewusst von generischer UI- und Infrastruktur-Logik getrennt.
+## 🔗 Links
 
-Der Architekturgrundsatz lautet: KI soll als klar definierte Komponente eingebettet werden, nicht unstrukturiert über die gesamte Anwendung verteilt sein.
+- **Desktop-Repo**: [aurora-iptv](https://github.com/uksuleyman-dev/aurora-iptv)
+- **Mobile-Repo**: [aurora-iptv-flutter](https://github.com/uksuleyman-dev/aurora-iptv-flutter)
+- **Dokumentation**: [Siehe Hauptprojekt](https://github.com/uksuleyman-dev/aurora-iptv-flutter)
 
----
+## 📝 Lizenz
 
-## Warum dieses Projekt technisch relevant ist
-
-Aurora IPTV zeigt praktische Erfahrung in:
-
-- Cross-Platform-Systemdesign
-- Integration heterogener APIs und Datenquellen
-- plattformspezifischer Architektur
-- lokalen Daten- und Security-Konzepten
-- Medien-/Streaming-Technologie
-- Build- und Release-Automatisierung
-- Update-Architektur
-- QA und technische Dokumentation
-- Trennung von Produkt-, Plattform- und Infrastrukturbelangen
-
----
-
-## Bezug zu System Architecture / Data & AI
-
-Das Projekt demonstriert insbesondere:
-
-- Systemzerlegung in klar definierte Module
-- Schnittstellen zwischen Daten-, Service- und Präsentationsschichten
-- Integration verschiedener externer Systeme
-- Umgang mit Plattformabhängigkeiten
-- technische Entscheidungen mit Blick auf Betrieb und Wartbarkeit
-- Verbindung von Architektur und tatsächlicher Umsetzung
-- strukturierte technische Dokumentation und QA
-
-Es ist kein Enterprise-Architekturprojekt. Es zeigt jedoch eine reale, wachsende Anwendung, bei der **Architekturentscheidungen unmittelbare Auswirkungen auf mehrere Plattformen und technische Subsysteme haben**.
+Privates Projekt von [uksuleyman-dev](https://github.com/uksuleyman-dev)
 
 ---
 
-## Privates Repository
-
-Die vollständige Codebasis enthält zusätzlich:
-- Produktdokumentation
-- technische Spezifikationen
-- QA-Unterlagen
-- Team-/Agentenregeln
-- Installer
-- plattformspezifische Implementierungen
-- Release- und Update-Skripte
-
----
-
-## Status
-
-Aktiver Entwicklungsstand im privaten Repository.
-
-## Hinweis
-
-Dieses Repository dient ausschließlich als **technischer Showcase**.  
-Der vollständige Quellcode bleibt privat.
+*Professionelle IPTV-Lösung mit moderner Architektur und umfassender Plattformunterstützung.*
