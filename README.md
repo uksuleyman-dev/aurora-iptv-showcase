@@ -1,102 +1,93 @@
-# Aurora IPTV 📺
+# Aurora IPTV — Showcase
 
-> Cross-Platform IPTV-Streaming-Anwendung mit professionellem Release-Management
+> Architektur-Showcase einer plattformübergreifenden IPTV-Anwendung mit mehreren Datenquellen, Player-Backends und gerätespezifischen Integrationen.
 
-Eine moderne IPTV-Anwendung für Desktop und Mobile mit Unterstützung für Live-TV, VOD (Video-on-Demand) und umfassenden Benutzerverwaltung.
+## Projektidee
 
-## 🎯 Features
+Aurora IPTV verfolgt das Ziel, unterschiedliche IPTV-Quellen und Zielplattformen hinter einer gemeinsamen Anwendungsschicht zusammenzuführen. Die eigentliche Herausforderung liegt nicht nur in der Benutzeroberfläche, sondern in der **Integration heterogener Datenquellen, Player-Technologien, Plattformen und Persistenzmechanismen**.
 
-- **Cross-Platform-Support**: Desktop (Windows, macOS, Linux) und Mobile (iOS, Android via Flutter)
-- **Live-TV Streaming**: Unterstützung für HLS, DASH und weitere Streaming-Protokolle
-- **VOD-Katalog**: Umfangreiche Verwaltung von On-Demand-Inhalten
-- **Benutzerprofile**: Multi-User-Support mit persönlichen Favoriten
-- **Session-State-Management**: Nahtlose Wiederaufnahme von Streams
-- **Deep Linking**: Direkte Links zu Inhalten
-- **Offline-Modus**: Download und lokale Wiedergabe (optional)
+Dieses Repository dokumentiert die Architektur des Projekts. Es enthält keine Zugangsdaten, privaten Playlists oder produktiven Nutzerdaten.
 
-## 🛠️ Tech Stack
+## Systemkontext
 
-### Desktop
-- **Framework**: Native Desktop (C++/Qt oder Electron)
-- **Streaming**: ffmpeg, LibVLC
-- **Database**: SQLite
-
-### Mobile (Flutter)
-- **Framework**: Flutter (Dart)
-- **Video Player**: video_player Plugin
-- **State Management**: Provider / Riverpod
-- **Storage**: Hive / Sqflite
-
-### Backend
-- **API**: REST/GraphQL
-- **Authentication**: JWT-basiert
-- **Content Delivery**: CDN-optimiert
-
-## 📦 Installation
-
-### Desktop
-```bash
-git clone https://github.com/uksuleyman-dev/aurora-iptv.git
-cd aurora-iptv
-
-# Abhängigkeiten installieren
-brew install ffmpeg libvlc  # macOS
-# oder apt-get für Linux
-
-# Build
-make build
+```text
+ Xtream API ─┐
+ M3U ────────┼──→ Daten-/Provider-Schicht
+ EPG ────────┘             │
+                           ▼
+                  Domänen-/App-Logik
+                    │             │
+                    ▼             ▼
+              lokale Daten    Player-Abstraktion
+              / Settings       │          │
+                               ▼          ▼
+                              MPV      ExoPlayer
+                               │          │
+                               └────┬─────┘
+                                    ▼
+                         Windows / Linux /
+                         Android / Fire TV
 ```
 
-### Mobile (Flutter)
-```bash
-git clone https://github.com/uksuleyman-dev/aurora-iptv-flutter.git
-cd aurora-iptv-flutter
+## Technische Schwerpunkte
 
-flutter pub get
-flutter run
+- **Flutter / Dart** als gemeinsame Cross-Platform-Basis
+- Zielplattformen: **Windows, Linux, Android und Fire TV**
+- Unterstützung unterschiedlicher IPTV-Quellen wie **Xtream, M3U und EPG**
+- Plattformabhängige Wiedergabe über unterschiedliche Player-Technologien
+- Lokale Persistenz über geeignete Storage-Mechanismen
+- Secure Storage für schützenswerte lokale Informationen
+- Build-, Release- und Update-Prozesse als Teil des Gesamtsystems
+
+## Zentrale Architekturidee
+
+Externe IPTV-Quellen liefern Daten in unterschiedlichen Formaten. Diese Unterschiede sollen nicht durch die gesamte Anwendung propagiert werden. Eine Provider-/Normalisierungsschicht übersetzt sie in ein gemeinsames internes Modell.
+
+Ähnlich wird die Wiedergabe nicht direkt an eine einzelne Player-Technologie gekoppelt. Eine Player-Abstraktion erlaubt, plattformspezifische Implementierungen hinter einer gemeinsamen Schnittstelle zu verwenden.
+
+## Datenfluss
+
+```text
+Provider / Playlist
+        ↓
+Parsing & Normalisierung
+        ↓
+internes Datenmodell
+        ├────→ UI / Navigation
+        ├────→ lokale Persistenz
+        └────→ Player-Abstraktion
+                       ↓
+             plattformspezifischer Player
 ```
 
-## 🎬 Streaming Unterstützung
+## Architekturentscheidungen
 
-| Format | Desktop | Mobile |
-|--------|---------|--------|
-| HLS (m3u8) | ✅ | ✅ |
-| DASH (mpd) | ✅ | ✅ |
-| RTMP | ✅ | ⚠️ |
-| HTTP Progressive | ✅ | ✅ |
+### Gemeinsames internes Modell
+Xtream-, M3U- und EPG-Daten werden an einer definierten Systemgrenze verarbeitet. Dadurch bleibt die restliche Anwendung möglichst unabhängig vom Eingabeformat.
 
-## 🚀 Build & Release
+### Player-Abstraktion
+Unterschiedliche Betriebssysteme haben unterschiedliche Wiedergabeanforderungen. Statt diese Unterschiede in UI und Geschäftslogik zu verteilen, werden sie hinter einer Player-Schnittstelle gekapselt.
 
-```bash
-# Desktop-Build
-make release
+### Trennung von Konfiguration und Secrets
+Normale Einstellungen und schützenswerte Informationen haben unterschiedliche Sicherheitsanforderungen und werden entsprechend getrennt behandelt.
 
-# Flutter-Build (APK/IPA)
-flutter build apk
-flutter build ios
-```
+### Release-Prozess als Architekturthema
+Eine Cross-Platform-Anwendung ist nicht mit dem Quellcode abgeschlossen. Build, Paketierung, Updates und Plattformunterschiede gehören zum Systemdesign.
 
-## 📊 Architektur
+## Was dieses Projekt demonstriert
 
-```
-auora-iptv/
-├── desktop/           # Desktop-Anwendung
-├── mobile/            # Flutter Mobile App
-├── backend/           # Backend-API
-├── docs/              # Dokumentation
-└── tests/             # Tests
-```
+Aurora zeigt besonders **Systemintegration und Abstraktion**: mehrere externe Datenquellen, unterschiedliche Laufzeitplattformen und verschiedene technische Implementierungen werden über definierte Schnittstellen in einem konsistenten Gesamtsystem zusammengeführt.
 
-## 🔗 Links
+## Inhalt dieses Showcases
 
-- **Desktop-Repo**: [aurora-iptv](https://github.com/uksuleyman-dev/aurora-iptv)
-- **Mobile-Repo**: [aurora-iptv-flutter](https://github.com/uksuleyman-dev/aurora-iptv-flutter)
-- **Dokumentation**: [Siehe Hauptprojekt](https://github.com/uksuleyman-dev/aurora-iptv-flutter)
+- `README.md` — System- und Projektüberblick
+- `ARCHITECTURE.md` — Komponenten, Schnittstellen und Designentscheidungen
+- `examples/provider-flow.md` — anonymisierter Datenfluss vom Provider bis zum Player
 
-## 📝 Lizenz
+## Datenschutz
 
-Privates Projekt von [uksuleyman-dev](https://github.com/uksuleyman-dev)
+Playlists, Accounts, Tokens und produktive Konfigurationen werden nicht veröffentlicht. Der Showcase konzentriert sich auf Architektur und Engineering-Muster.
 
 ---
 
-*Professionelle IPTV-Lösung mit moderner Architektur und umfassender Plattformunterstützung.*
+**Portfolio-Schwerpunkt:** Cross-Platform Architecture · Schnittstellen · Datenflüsse · System Integration
